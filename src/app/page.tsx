@@ -1,9 +1,21 @@
+import Navigation from '@/components/Navigation';
+import Hero from '@/components/Hero';
+import AboutSection from '@/components/AboutSection';
+import ProjectsSection from '@/components/ProjectsSection';
+import Roadmap from '@/components/Roadmap';
+import ContactsSection from '@/components/ContactsSection';
+
 export default function Home() {
   return (
-    <main className="flex min-h-screen items-center justify-center">
-      <p className="text-muted-foreground">
-        Clone target not yet built. Run <code className="font-mono text-foreground">/clone-website</code> to start.
-      </p>
-    </main>
+    <>
+      <Navigation />
+      <main>
+        <Hero />
+        <AboutSection />
+        <ProjectsSection />
+        <Roadmap />
+        <ContactsSection />
+      </main>
+    </>
   );
 }
