@@ -6,6 +6,6 @@ meta:
 build:
   additionalCommands: npm run build
 run:
-  command: npm run start -- -p 3000
+  command: node .next/standalone/server.js
   persistenceMount: /app/public
   containerPort: "3000"
