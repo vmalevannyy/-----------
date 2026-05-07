@@ -22,6 +22,22 @@ function Lightbox({
   onNavigate: (index: number) => void;
 }) {
   const shouldReduceMotion = useReducedMotion();
+  const [imgLoaded, setImgLoaded] = useState(false);
+
+  // Preload adjacent images
+  useEffect(() => {
+    const preload = (url: string) => {
+      const img = new window.Image();
+      img.src = url;
+    };
+    if (currentIndex > 0) preload(images[currentIndex - 1]);
+    if (currentIndex < images.length - 1) preload(images[currentIndex + 1]);
+  }, [currentIndex, images]);
+
+  // Reset loaded state when index changes
+  useEffect(() => {
+    setImgLoaded(false);
+  }, [currentIndex]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -173,6 +189,20 @@ function Lightbox({
           }}
           onClick={(e) => e.stopPropagation()}
         >
+          {/* Loading Skeleton */}
+          {!imgLoaded && (
+            <div
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+              }}
+            />
+          )}
           <Image
             src={images[currentIndex]}
             alt={`Image ${currentIndex + 1}`}
@@ -184,6 +214,7 @@ function Lightbox({
               objectFit: 'contain',
             }}
             priority
+            onLoad={() => setImgLoaded(true)}
           />
         </motion.div>
       </AnimatePresence>

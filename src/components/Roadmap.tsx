@@ -256,7 +256,7 @@ export default function Roadmap() {
                 />
               );
             })}
-            {/* Current step number large display */}
+            {/* Current step number large display - background watermark */}
             <motion.div
               key={activeIndex}
               initial={{ opacity: 0 }}
@@ -272,7 +272,7 @@ export default function Roadmap() {
                 color: '#111',
                 fontFamily: 'inherit',
                 pointerEvents: 'none',
-                zIndex: 1,
+                zIndex: -1,
               }}
             >
               {activeStep.number}
