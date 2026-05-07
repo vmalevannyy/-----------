@@ -10,21 +10,21 @@ import 'swiper/css';
 import 'swiper/css/effect-fade';
 
 const images = [
-  '/images/MainPage/001_0000.JPG',
-  '/images/MainPage/001_Spalnya005_0000.JPG',
-  '/images/MainPage/001_Spalnya008_0000.JPG',
-  '/images/MainPage/001_Timesquare006_0000.JPG',
-  '/images/MainPage/001_VORONEZH003_0000.JPG',
-  '/images/MainPage/001_VORONEZH010_0000.JPG',
-  '/images/MainPage/002_0000.JPG',
-  '/images/MainPage/2_006_0000.JPG',
-  '/images/MainPage/010_0000.JPG',
-  '/images/MainPage/Corona_Camera006_0000.JPG',
-  '/images/MainPage/IMG_1587.JPG',
-  '/images/MainPage/Livingroom_001_0000.JPG', 
-  '/images/MainPage/Livingroom_005_0000.JPG',
-  '/images/MainPage/VR_LR_003_0000.JPG',
-  '/images/MainPage/СПАЛЬНЯ_001_0100.JPG',
+  '/images/MainPage/001_0000.webp',
+  '/images/MainPage/001_Spalnya005_0000.webp',
+  '/images/MainPage/001_Spalnya008_0000.webp',
+  '/images/MainPage/001_Timesquare006_0000.webp',
+  '/images/MainPage/001_VORONEZH003_0000.webp',
+  '/images/MainPage/001_VORONEZH010_0000.webp',
+  '/images/MainPage/002_0000.webp',
+  '/images/MainPage/2_006_0000.webp',
+  '/images/MainPage/010_0000.webp',
+  '/images/MainPage/Corona_Camera006_0000.webp',
+  '/images/MainPage/IMG_1587.webp',
+  '/images/MainPage/Livingroom_001_0000.webp', 
+  '/images/MainPage/Livingroom_005_0000.webp',
+  '/images/MainPage/VR_LR_003_0000.webp',
+  '/images/MainPage/СПАЛЬНЯ_001_0100.webp',
 ];
 
 export default function Hero() {

@@ -23,6 +23,23 @@ function Lightbox({
 }) {
   const shouldReduceMotion = useReducedMotion();
   const [imgLoaded, setImgLoaded] = useState(false);
+  const [direction, setDirection] = useState(0);
+
+  // Slide animation variants
+  const slideVariants = {
+    enter: (dir: number) => ({
+      x: dir > 0 ? '100%' : '-100%',
+      opacity: 0,
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+    },
+    exit: (dir: number) => ({
+      x: dir > 0 ? '-100%' : '100%',
+      opacity: 0,
+    }),
+  };
 
   // Preload adjacent images
   useEffect(() => {
@@ -42,8 +59,10 @@ function Lightbox({
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'ArrowLeft') {
+        setDirection(-1);
         onNavigate(currentIndex > 0 ? currentIndex - 1 : images.length - 1);
       } else if (e.key === 'ArrowRight') {
+        setDirection(1);
         onNavigate(currentIndex < images.length - 1 ? currentIndex + 1 : 0);
       } else if (e.key === 'Escape') {
         onClose();
@@ -65,12 +84,24 @@ function Lightbox({
     }
   };
 
+  const handlePrev = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setDirection(-1);
+    onNavigate(currentIndex > 0 ? currentIndex - 1 : images.length - 1);
+  };
+
+  const handleNext = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setDirection(1);
+    onNavigate(currentIndex < images.length - 1 ? currentIndex + 1 : 0);
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.3, ease: LUXURY_EASE }}
+      transition={{ duration: 0.35, ease: [0.2, 0, 0, 1] }}
       style={{
         position: 'fixed',
         top: 0,
@@ -83,6 +114,7 @@ function Lightbox({
         alignItems: 'center',
         justifyContent: 'center',
         cursor: 'pointer',
+        overflow: 'hidden',
       }}
       onClick={handleBackdropClick}
     >
@@ -114,10 +146,7 @@ function Lightbox({
 
       {/* Left Arrow */}
       <button
-        onClick={(e) => {
-          e.stopPropagation();
-          onNavigate(currentIndex > 0 ? currentIndex - 1 : images.length - 1);
-        }}
+        onClick={handlePrev}
         style={{
           position: 'absolute',
           left: '24px',
@@ -144,10 +173,7 @@ function Lightbox({
 
       {/* Right Arrow */}
       <button
-        onClick={(e) => {
-          e.stopPropagation();
-          onNavigate(currentIndex < images.length - 1 ? currentIndex + 1 : 0);
-        }}
+        onClick={handleNext}
         style={{
           position: 'absolute',
           right: '24px',
@@ -173,14 +199,15 @@ function Lightbox({
       </button>
 
       {/* Image */}
-      <AnimatePresence mode="wait">
+      <AnimatePresence mode="popLayout">
         <motion.div
           key={currentIndex}
-          layoutId={`project-image-${currentIndex}`}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.3, ease: LUXURY_EASE }}
+          custom={direction}
+          variants={slideVariants}
+          initial="enter"
+          animate="center"
+          exit="exit"
+          transition={{ duration: 0.35, ease: [0.2, 0, 0, 1] }}
           style={{
             position: 'relative',
             maxWidth: '90vw',
@@ -252,7 +279,6 @@ function ProjectImage({ src, alt, index, onClick }: { src: string; alt: string; 
   return (
     <motion.div
       ref={ref}
-      layoutId={`project-image-${index}`}
       style={{ 
         position: 'relative', 
         overflow: 'hidden',
