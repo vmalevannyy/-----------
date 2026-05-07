@@ -65,27 +65,10 @@ const steps: Step[] = [
   },
 ];
 
-const containerVariants = {
-  hidden: {},
-  visible: {
-    transition: { staggerChildren: 0.12 }
-  }
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 24 },
-  visible: { 
-    opacity: 1, 
-    y: 0,
-    transition: { duration: 0.6, ease: [0.2, 0, 0, 1] as any }
-  }
-};
-
 export default function Roadmap() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [contentOpacity, setContentOpacity] = useState(1);
-  const prevIndexRef = useRef(0);
+  const [stepProgress, setStepProgress] = useState(0); // 0-1 within current step
   const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {
@@ -103,15 +86,13 @@ export default function Roadmap() {
       const clampedProgress = Math.min(1, Math.max(0, progress));
 
       const index = Math.min(steps.length - 1, Math.max(0, Math.floor(clampedProgress * steps.length)));
+      
+      // Calculate progress within current step
+      const stepProg = (clampedProgress * steps.length) - index;
+      const clampedStepProg = Math.min(1, Math.max(0, stepProg));
 
-      if (index !== prevIndexRef.current) {
-        setContentOpacity(0);
-        setTimeout(() => {
-          setActiveIndex(index);
-          setContentOpacity(1);
-        }, 150);
-        prevIndexRef.current = index;
-      }
+      setActiveIndex(index);
+      setStepProgress(clampedStepProg);
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -133,7 +114,7 @@ export default function Roadmap() {
       viewport={{ once: true, margin: '-80px' }}
       transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.7, ease: [0.2, 0, 0, 1] as any }}
       style={{
-        height: '500vh',
+        height: '350vh',
         position: 'relative',
         backgroundColor: '#f7f6f4',
         color: '#111',
@@ -203,11 +184,12 @@ export default function Roadmap() {
             >
               Шаг за шагом
             </div>
-            <div
-              style={{
-                opacity: contentOpacity,
-                transition: 'opacity 0.3s ease',
-              }}
+            {/* Step content with animation */}
+            <motion.div
+              key={activeIndex}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, ease: [0.2, 0, 0, 1] as any }}
             >
               <div
                 style={{
@@ -247,7 +229,7 @@ export default function Roadmap() {
                   </li>
                 ))}
               </ul>
-            </div>
+            </motion.div>
           </div>
 
           {/* RIGHT COLUMN - Visual Images */}
@@ -274,15 +256,32 @@ export default function Roadmap() {
                 />
               );
             })}
+            {/* Current step number large display */}
+            <motion.div
+              key={activeIndex}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, ease: [0.2, 0, 0, 1] as any }}
+              style={{
+                position: 'absolute',
+                right: '64px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                fontSize: 'clamp(100px, 16vw, 200px)',
+                opacity: 0.07,
+                color: '#111',
+                fontFamily: 'inherit',
+                pointerEvents: 'none',
+                zIndex: 1,
+              }}
+            >
+              {activeStep.number}
+            </motion.div>
           </div>
         </div>
 
-        {/* BOTTOM INDICATORS */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
+        {/* BOTTOM INDICATORS - Progress Bars */}
+        <div
           style={{
             position: 'absolute',
             bottom: '40px',
@@ -293,21 +292,40 @@ export default function Roadmap() {
           }}
         >
           {steps.map((step, index) => {
-            const isActive = index === activeIndex;
+            let widthPercent = 0;
+            if (index < activeIndex) {
+              widthPercent = 100;
+            } else if (index === activeIndex) {
+              widthPercent = stepProgress * 100;
+            } else {
+              widthPercent = 0;
+            }
             return (
-              <motion.div
+              <div
                 key={step.number}
-                variants={itemVariants}
                 style={{
                   flex: 1,
                   height: '1px',
-                  backgroundColor: isActive ? '#111' : 'rgba(0,0,0,0.15)',
-                  transition: 'background-color 0.3s ease',
+                  backgroundColor: 'rgba(0,0,0,0.15)',
+                  position: 'relative',
+                  overflow: 'hidden',
                 }}
-              />
+              >
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: 0,
+                    top: 0,
+                    height: '100%',
+                    width: `${widthPercent}%`,
+                    backgroundColor: '#111',
+                    transition: 'width 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+                  }}
+                />
+              </div>
             );
           })}
-        </motion.div>
+        </div>
       </div>
     </motion.section>
   );

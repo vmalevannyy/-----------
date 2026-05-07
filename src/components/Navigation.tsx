@@ -2,10 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 export default function Navigation() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
+  const isHome = pathname === '/';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -20,8 +23,17 @@ export default function Navigation() {
     { label: 'Проекты', href: '#projects' },
     { label: 'О нас', href: '#about' },
     { label: 'Услуги', href: '/services' },
-    { label: 'НАЧАТЬ ПРОЕКТ', href: '#contact' },
+    { label: 'НАЧАТЬ ПРОЕКТ', href: '#contact', isCta: true },
   ];
+
+  const handleCtaClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (isHome) {
+      document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      window.location.href = '/#contact';
+    }
+  };
 
   return (
     <nav
@@ -42,19 +54,19 @@ export default function Navigation() {
       }}
     >
       {/* Logo */}
-        <Link href="/" style={{ textDecoration: 'none' }}>
         <div
+          onClick={() => { window.location.href = '/'; }}
           style={{
             color: 'white',
             fontSize: '1.5rem',
             fontWeight: 300,
             letterSpacing: '2px',
             cursor: 'pointer',
+            textDecoration: 'none',
           }}
         >
           M9
         </div>
-        </Link>
 
       {/* Desktop Menu */}
       <div
@@ -66,8 +78,10 @@ export default function Navigation() {
         className="desktop-menu"
       >
         {navItems.map((item) => (
-          <Link key={item.label} href={item.href}>
+          item.isCta ? (
             <span
+              key={item.label}
+              onClick={handleCtaClick}
               style={{
                 background: 'none',
                 border: 'none',
@@ -90,7 +104,59 @@ export default function Navigation() {
             >
               {item.label}
             </span>
-          </Link>
+          ) : item.href === '/' ? (
+            <span
+              key={item.label}
+              onClick={() => { window.location.href = '/'; }}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: 'white',
+                fontSize: '0.75rem',
+                letterSpacing: '2px',
+                textTransform: 'uppercase',
+                cursor: 'pointer',
+                padding: '8px 0',
+                transition: 'opacity 0.3s ease',
+                fontFamily: 'inherit',
+                display: 'inline-block',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.opacity = '0.7';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.opacity = '1';
+              }}
+            >
+              {item.label}
+            </span>
+          ) : (
+            <Link key={item.label} href={item.href}>
+              <span
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: 'white',
+                  fontSize: '0.75rem',
+                  letterSpacing: '2px',
+                  textTransform: 'uppercase',
+                  cursor: 'pointer',
+                  padding: '8px 0',
+                  transition: 'opacity 0.3s ease',
+                  fontFamily: 'inherit',
+                  display: 'inline-block',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.opacity = '0.7';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.opacity = '1';
+                }}
+              >
+                {item.label}
+              </span>
+            </Link>
+          )
         ))}
       </div>
 
@@ -156,8 +222,13 @@ export default function Navigation() {
           className="mobile-menu"
         >
           {navItems.map((item) => (
-            <Link key={item.label} href={item.href}>
+            item.isCta ? (
               <span
+                key={item.label}
+                onClick={(e) => {
+                  handleCtaClick(e);
+                  setMobileMenuOpen(false);
+                }}
                 style={{
                   background: 'none',
                   border: 'none',
@@ -174,7 +245,51 @@ export default function Navigation() {
               >
                 {item.label}
               </span>
-            </Link>
+            ) : item.href === '/' ? (
+              <span
+                key={item.label}
+                onClick={() => { 
+                  window.location.href = '/'; 
+                  setMobileMenuOpen(false);
+                }}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: 'white',
+                  fontSize: '0.875rem',
+                  letterSpacing: '2px',
+                  textTransform: 'uppercase',
+                  cursor: 'pointer',
+                  padding: '12px 0',
+                  textAlign: 'left',
+                  fontFamily: 'inherit',
+                  display: 'block',
+                }}
+              >
+                {item.label}
+              </span>
+            ) : (
+              <Link key={item.label} href={item.href}>
+                <span
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: 'white',
+                    fontSize: '0.875rem',
+                    letterSpacing: '2px',
+                    textTransform: 'uppercase',
+                    cursor: 'pointer',
+                    padding: '12px 0',
+                    textAlign: 'left',
+                    fontFamily: 'inherit',
+                    display: 'block',
+                  }}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {item.label}
+                </span>
+              </Link>
+            )
           ))}
         </div>
       )}

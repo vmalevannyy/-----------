@@ -1,15 +1,212 @@
 "use client";
 
 import { useRouter, useParams } from 'next/navigation';
-import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 import { projects } from '@/data/projects';
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import Image from 'next/image';
+import Navigation from '@/components/Navigation';
 
 const LUXURY_EASE = [0.2, 0, 0, 1] as any;
-const BLUR_DATA_URL = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q==';
+const BLUR_DATA_URL = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q==';
 
-function ProjectImage({ src, alt, index }: { src: string; alt: string; index: number }) {
+function Lightbox({ 
+  images, 
+  currentIndex, 
+  onClose, 
+  onNavigate 
+}: { 
+  images: string[]; 
+  currentIndex: number; 
+  onClose: () => void; 
+  onNavigate: (index: number) => void;
+}) {
+  const shouldReduceMotion = useReducedMotion();
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') {
+        onNavigate(currentIndex > 0 ? currentIndex - 1 : images.length - 1);
+      } else if (e.key === 'ArrowRight') {
+        onNavigate(currentIndex < images.length - 1 ? currentIndex + 1 : 0);
+      } else if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    document.body.style.overflow = 'hidden';
+    
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'unset';
+    };
+  }, [currentIndex, images.length, onClose, onNavigate]);
+
+  const handleBackdropClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3, ease: LUXURY_EASE }}
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.95)',
+        zIndex: 1000,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: 'pointer',
+      }}
+      onClick={handleBackdropClick}
+    >
+      {/* Close Button */}
+      <button
+        onClick={onClose}
+        style={{
+          position: 'absolute',
+          top: '24px',
+          right: '24px',
+          backgroundColor: 'transparent',
+          border: 'none',
+          color: 'white',
+          fontSize: '32px',
+          cursor: 'pointer',
+          zIndex: 1001,
+          width: '48px',
+          height: '48px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          transition: 'opacity 0.3s ease',
+        }}
+        onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.7'; }}
+        onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; }}
+      >
+        ✕
+      </button>
+
+      {/* Left Arrow */}
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onNavigate(currentIndex > 0 ? currentIndex - 1 : images.length - 1);
+        }}
+        style={{
+          position: 'absolute',
+          left: '24px',
+          top: '50%',
+          transform: 'translateY(-50%)',
+          backgroundColor: 'transparent',
+          border: 'none',
+          color: 'white',
+          fontSize: '48px',
+          cursor: 'pointer',
+          zIndex: 1001,
+          width: '64px',
+          height: '64px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          transition: 'opacity 0.3s ease',
+        }}
+        onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.7'; }}
+        onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; }}
+      >
+        ‹
+      </button>
+
+      {/* Right Arrow */}
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onNavigate(currentIndex < images.length - 1 ? currentIndex + 1 : 0);
+        }}
+        style={{
+          position: 'absolute',
+          right: '24px',
+          top: '50%',
+          transform: 'translateY(-50%)',
+          backgroundColor: 'transparent',
+          border: 'none',
+          color: 'white',
+          fontSize: '48px',
+          cursor: 'pointer',
+          zIndex: 1001,
+          width: '64px',
+          height: '64px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          transition: 'opacity 0.3s ease',
+        }}
+        onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.7'; }}
+        onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; }}
+      >
+        ›
+      </button>
+
+      {/* Image */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={currentIndex}
+          layoutId={`project-image-${currentIndex}`}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3, ease: LUXURY_EASE }}
+          style={{
+            position: 'relative',
+            maxWidth: '90vw',
+            maxHeight: '90vh',
+            cursor: 'default',
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <Image
+            src={images[currentIndex]}
+            alt={`Image ${currentIndex + 1}`}
+            width={1200}
+            height={800}
+            style={{
+              maxWidth: '90vw',
+              maxHeight: '90vh',
+              objectFit: 'contain',
+            }}
+            priority
+          />
+        </motion.div>
+      </AnimatePresence>
+
+      {/* Counter */}
+      <div
+        style={{
+          position: 'absolute',
+          bottom: '24px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          color: 'rgba(255, 255, 255, 0.6)',
+          fontSize: '14px',
+          fontFamily: 'var(--font-inter), Inter, sans-serif',
+        }}
+      >
+        {currentIndex + 1} / {images.length}
+      </div>
+    </motion.div>
+  );
+}
+
+function ProjectImage({ src, alt, index, onClick }: { src: string; alt: string; index: number; onClick?: () => void }) {
   const ref = useRef<HTMLDivElement>(null);
   const shouldReduceMotion = useReducedMotion();
   
@@ -24,16 +221,19 @@ function ProjectImage({ src, alt, index }: { src: string; alt: string; index: nu
   return (
     <motion.div
       ref={ref}
+      layoutId={`project-image-${index}`}
       style={{ 
         position: 'relative', 
         overflow: 'hidden',
         width: '100%',
         aspectRatio: index % 3 === 0 ? '16/9' : '4/3',
+        cursor: onClick ? 'pointer' : 'default',
       }}
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-100px' }}
       transition={{ duration: 0.8, ease: LUXURY_EASE }}
+      onClick={onClick}
     >
       <motion.div
         style={{
@@ -63,6 +263,8 @@ export default function ProjectPage() {
   const params = useParams();
   const projectId = params.id as string;
   const shouldReduceMotion = useReducedMotion();
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
   
   const project = projects.find(p => p.id === projectId);
 
@@ -81,8 +283,24 @@ export default function ProjectPage() {
     router.push(`/projects/${nextProject.id}`);
   };
 
+  const openLightbox = (index: number) => {
+    setLightboxIndex(index);
+    setLightboxOpen(true);
+  };
+
+  const closeLightbox = () => {
+    setLightboxOpen(false);
+  };
+
+  const navigateLightbox = (index: number) => {
+    setLightboxIndex(index);
+  };
+
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#fff' }}>
+      {/* Navigation */}
+      <Navigation />
+      
       {/* Header with luxury typography */}
       <motion.div 
         style={{ 
@@ -174,6 +392,7 @@ export default function ProjectPage() {
                   src={image} 
                   alt={`${project.title} ${index + 1}`} 
                   index={index}
+                  onClick={() => openLightbox(index)}
                 />
               </motion.div>
             );
@@ -196,6 +415,7 @@ export default function ProjectPage() {
                     src={image} 
                     alt={`${project.title} ${index + 1}`} 
                     index={index}
+                    onClick={() => openLightbox(index)}
                   />
                 </div>
                 <div style={{ width: '40%' }} />
@@ -223,6 +443,7 @@ export default function ProjectPage() {
                     src={image} 
                     alt={`${project.title} ${index + 1}`} 
                     index={index}
+                    onClick={() => openLightbox(index)}
                   />
                 </div>
               </motion.div>
@@ -250,6 +471,7 @@ export default function ProjectPage() {
                     src={image} 
                     alt={`${project.title} ${index + 1}`} 
                     index={index}
+                    onClick={() => openLightbox(index)}
                   />
                 </div>
                 <div style={{ flex: '1' }}>
@@ -257,6 +479,7 @@ export default function ProjectPage() {
                     src={nextImage} 
                     alt={`${project.title} ${nextIndex + 1}`} 
                     index={nextIndex}
+                    onClick={() => openLightbox(nextIndex)}
                   />
                 </div>
               </motion.div>
@@ -410,6 +633,65 @@ export default function ProjectPage() {
           </button>
         </div>
       </motion.div>
+
+      {/* CTA Section */}
+      <div style={{
+        backgroundColor: 'oklch(0.1 0 0)',
+        color: 'white',
+        padding: '5rem 1rem',
+      }}>
+        <div style={{ maxWidth: '56rem', margin: '0 auto', textAlign: 'center' }}>
+          <h2 
+            style={{
+              fontFamily: 'var(--font-cormorant), "Cormorant Garamond", serif',
+              fontWeight: 300,
+              letterSpacing: '-0.02em',
+              fontSize: 'clamp(1.5rem, 4vw, 2.25rem)',
+              marginBottom: '2rem',
+              margin: 0,
+            }}
+          >
+            Готовы начать свой проект?
+          </h2>
+          <button
+            onClick={() => { window.location.href = '/#contact'; }}
+            style={{
+              backgroundColor: 'transparent',
+              border: '1px solid white',
+              color: 'white',
+              fontSize: '0.75rem',
+              letterSpacing: '0.15em',
+              padding: '1rem 3rem',
+              textTransform: 'uppercase',
+              cursor: 'pointer',
+              transition: 'all 0.5s cubic-bezier(0.2, 0, 0, 1)',
+              fontFamily: 'var(--font-inter), Inter, sans-serif',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = 'white';
+              e.currentTarget.style.color = 'black';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'transparent';
+              e.currentTarget.style.color = 'white';
+            }}
+          >
+            НАЧАТЬ ПРОЕКТ
+          </button>
+        </div>
+      </div>
+
+      {/* Lightbox */}
+      <AnimatePresence>
+        {lightboxOpen && (
+          <Lightbox
+            images={project.images}
+            currentIndex={lightboxIndex}
+            onClose={closeLightbox}
+            onNavigate={navigateLightbox}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }
