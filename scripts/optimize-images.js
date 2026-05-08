@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const PUBLIC_IMAGES_DIR = path.join(__dirname, '..', 'public', 'images');
-const MAX_DIMENSION = 2400;
+const MAX_DIMENSION = 1920;
 const QUALITY = 80;
 
 // Recursively get all image files
@@ -135,4 +135,4 @@ async function main() {
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
 }
 
-main().catch(console.error);
+

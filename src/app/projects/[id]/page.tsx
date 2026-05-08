@@ -240,7 +240,6 @@ function Lightbox({
               maxHeight: '90vh',
               objectFit: 'contain',
             }}
-            priority
             onLoad={() => setImgLoaded(true)}
           />
         </motion.div>
@@ -306,9 +305,10 @@ function ProjectImage({ src, alt, index, onClick }: { src: string; alt: string; 
           alt={alt}
           fill
           style={{ objectFit: 'cover' }}
-          placeholder="blur"
-          blurDataURL={BLUR_DATA_URL}
+          placeholder="empty"
+          quality={90}
           loading="lazy"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 1400px"
         />
       </motion.div>
     </motion.div>
@@ -590,9 +590,10 @@ export default function ProjectPage() {
             style={{
               objectFit: 'cover',
             }}
-            placeholder="blur"
-            blurDataURL={BLUR_DATA_URL}
+            placeholder="empty"
+            quality={90}
             loading="lazy"
+            sizes="(max-width: 768px) 100vw, 1400px"
           />
           <motion.div
             style={{

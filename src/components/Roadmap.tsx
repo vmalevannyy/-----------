@@ -252,7 +252,9 @@ export default function Roadmap() {
                     opacity: isActive ? 1 : 0,
                     transition: 'opacity 0.8s ease-in-out',
                   }}
-                  priority={index === 0}
+                  sizes="45vw"
+                  placeholder="empty"
+                  quality={90}
                 />
               );
             })}

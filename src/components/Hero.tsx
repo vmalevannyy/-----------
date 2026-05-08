@@ -55,10 +55,10 @@ export default function Hero() {
                 priority={index === 0} // Приоритет загрузки для первого кадра
                 className="object-cover"
                 sizes="100vw"
-                placeholder="blur"
-                blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMSAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiNmNWYwZWIiLz48L3N2Zz4="
+                placeholder="empty"
+                quality={90}
               />
-          </SwiperSlide>
+            </SwiperSlide>
         ))}
       </Swiper>
 
