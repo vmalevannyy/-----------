@@ -135,15 +135,8 @@ export default function Roadmap() {
           .roadmap-text-col {
             flex: 1 1 100% !important;
           }
-          /* Add padding-bottom to text container inside each step */
           .roadmap-step-content {
-            padding-bottom: 96px;
-          }
-          /* Make progress bars stick to bottom with safe area consideration */
-          .roadmap-indicators {
-            position: sticky !important;
-            bottom: 0;
-            padding-bottom: env(safe-area-inset-bottom, 20px);
+            padding-bottom: 120px;
           }
         }
       `}</style>
@@ -156,7 +149,7 @@ export default function Roadmap() {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
-          padding: '40px 64px 80px 64px',
+          padding: 'clamp(20px, 4vw, 40px) clamp(20px, 5vw, 64px) clamp(100px, 12vw, 80px) clamp(20px, 5vw, 64px)',
         }}
       >
         <div
@@ -244,7 +237,7 @@ export default function Roadmap() {
             </motion.div>
           </div>
 
-          {/* RIGHT COLUMN - Visual Images */}
+            {/* RIGHT COLUMN - Visual Images */}
           <div className="roadmap-image-col" style={{ 
             flex: '0 0 45%', 
             position: 'relative', 
@@ -270,27 +263,6 @@ export default function Roadmap() {
                 />
               );
             })}
-            {/* Current step number large display - background watermark */}
-            <motion.div
-              key={activeIndex}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, ease: [0.2, 0, 0, 1] as any }}
-              style={{
-                position: 'absolute',
-                right: '64px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                fontSize: 'clamp(100px, 16vw, 200px)',
-                opacity: 0.07,
-                color: '#111',
-                fontFamily: 'inherit',
-                pointerEvents: 'none',
-                zIndex: -1,
-              }}
-            >
-              {activeStep.number}
-            </motion.div>
           </div>
         </div>
 
