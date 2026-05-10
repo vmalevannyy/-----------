@@ -106,21 +106,22 @@ export default function Roadmap() {
   const activeStep = steps[activeIndex];
 
   return (
-    <motion.section
-      id="process"
-      ref={sectionRef}
-      initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 32 }}
-      whileInView={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-80px' }}
-      transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.7, ease: [0.2, 0, 0, 1] as any }}
-      style={{
-        height: '350vh',
-        position: 'relative',
-        backgroundColor: '#f7f6f4',
-        color: '#111',
-        fontFamily: 'var(--font-geist-sans), sans-serif',
-      }}
-    >
+    <div style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 60px)' }}>
+      <motion.section
+        id="process"
+        ref={sectionRef}
+        initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 32 }}
+        whileInView={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-80px' }}
+        transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.7, ease: [0.2, 0, 0, 1] as any }}
+        style={{
+          height: '350vh',
+          position: 'relative',
+          backgroundColor: '#f7f6f4',
+          color: '#111',
+          fontFamily: 'var(--font-geist-sans), sans-serif',
+        }}
+      >
       <style>{`
         @media (max-width: 768px) {
           .roadmap-container {
@@ -133,6 +134,16 @@ export default function Roadmap() {
           }
           .roadmap-text-col {
             flex: 1 1 100% !important;
+          }
+          /* Add padding-bottom to text container inside each step */
+          .roadmap-step-content {
+            padding-bottom: 96px;
+          }
+          /* Make progress bars stick to bottom with safe area consideration */
+          .roadmap-indicators {
+            position: sticky !important;
+            bottom: 0;
+            padding-bottom: env(safe-area-inset-bottom, 20px);
           }
         }
       `}</style>
@@ -187,6 +198,7 @@ export default function Roadmap() {
             {/* Step content with animation */}
             <motion.div
               key={activeIndex}
+              className="roadmap-step-content"
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, ease: [0.2, 0, 0, 1] as any }}
@@ -284,6 +296,7 @@ export default function Roadmap() {
 
         {/* BOTTOM INDICATORS - Progress Bars */}
         <div
+          className="roadmap-indicators"
           style={{
             position: 'absolute',
             bottom: '40px',
@@ -330,5 +343,6 @@ export default function Roadmap() {
         </div>
       </div>
     </motion.section>
+    </div>
   );
 }
