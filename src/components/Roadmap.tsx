@@ -106,7 +106,7 @@ export default function Roadmap() {
   const activeStep = steps[activeIndex];
 
   return (
-    <div style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 60px)' }}>
+    <div style={{ paddingBottom: 0 }}>
       <motion.section
         id="process"
         ref={sectionRef}
@@ -128,141 +128,150 @@ export default function Roadmap() {
             flex-direction: column !important;
           }
           .roadmap-image-col {
-            height: 260px !important;
+            height: 40vh !important;
+            max-height: 260px !important;
             flex: 1 1 100% !important;
             order: -1;
           }
           .roadmap-text-col {
             flex: 1 1 100% !important;
           }
-          .roadmap-step-content {
-            padding-bottom: 120px;
-          }
+
         }
       `}</style>
       <div
-        style={{
-          position: 'sticky',
-          top: NAVBAR_HEIGHT + 'px',
-          height: `calc(100vh - ${NAVBAR_HEIGHT}px)`,
-          overflow: 'hidden',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          padding: 'clamp(20px, 4vw, 40px) clamp(20px, 5vw, 64px) clamp(100px, 12vw, 80px) clamp(20px, 5vw, 64px)',
-        }}
-      >
-        <div
-          className="roadmap-container"
           style={{
+            position: 'sticky',
+            top: 0,
+            height: `calc(100vh - ${NAVBAR_HEIGHT}px)`,
+            overflow: 'hidden',
             display: 'flex',
+            flexDirection: 'column',
             justifyContent: 'space-between',
-            alignItems: 'stretch',
-            width: '100%',
-            flex: 1,
+            paddingTop: NAVBAR_HEIGHT + 24,
+            paddingBottom: 'calc(env(safe-area-inset-bottom) + 48px)',
+            paddingLeft: 'clamp(20px, 5vw, 64px)',
+            paddingRight: 'clamp(20px, 5vw, 64px)',
           }}
-        >
-          {/* LEFT COLUMN */}
-          <div className="roadmap-text-col" style={{ flex: '0 0 45%' }}>
-            <div
-              style={{
-                fontSize: '11px',
-                letterSpacing: '0.3em',
-                color: '#999',
-                marginBottom: '24px',
-                textTransform: 'uppercase',
-                fontFamily: 'inherit',
-              }}
-            >
-              Процесс работы
-            </div>
-            <div
-              style={{
-                fontSize: 'clamp(2.5rem, 4vw, 4.5rem)',
-                fontWeight: 300,
-                lineHeight: 1.1,
-                marginBottom: '48px',
-                letterSpacing: '-0.02em',
-                fontFamily: 'inherit',
-              }}
-            >
-              Шаг за шагом
-            </div>
-            {/* Step content with animation */}
-            <motion.div
-              key={activeIndex}
-              className="roadmap-step-content"
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, ease: [0.2, 0, 0, 1] as any }}
-            >
-              <div
-                style={{
-                  fontSize: '28px',
-                  fontWeight: 500,
-                  marginBottom: '16px',
-                  color: '#111',
-                  fontFamily: 'inherit',
-                }}
-              >
-                {activeStep.title}
-              </div>
-              <ul style={{ 
-                listStyle: 'none', 
-                padding: 0, 
-                margin: 0,
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '12px',
-              }}>
-                {activeStep.description.map((item, i) => (
-                  <li key={i} style={{
-                    fontSize: '17px',
-                    lineHeight: 1.6,
-                    color: '#444',
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    gap: '12px',
-                  }}>
-                    <span style={{ 
-                      color: '#aaa', 
-                      fontSize: '13px',
-                      marginTop: '3px',
-                      flexShrink: 0,
-                    }}>—</span>
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
+      >
+        {/* Header Block */}
+        <div style={{ padding: 'clamp(20px, 4vw, 40px) 0 0 0' }}>
+          <div
+            style={{
+              fontSize: '11px',
+              letterSpacing: '0.3em',
+              color: '#999',
+              marginBottom: '24px',
+              textTransform: 'uppercase',
+              fontFamily: 'inherit',
+            }}
+          >
+            Процесс работы
           </div>
+          <div
+            style={{
+              fontSize: 'clamp(2.5rem, 4vw, 4.5rem)',
+              fontWeight: 300,
+              lineHeight: 1.1,
+              marginBottom: '48px',
+              letterSpacing: '-0.02em',
+              fontFamily: 'inherit',
+            }}
+          >
+            Шаг за шагом
+          </div>
+        </div>
 
-            {/* RIGHT COLUMN - Visual Images */}
-          <div className="roadmap-image-col" style={{ 
-            flex: '0 0 45%', 
-            position: 'relative', 
-            height: 'calc(100vh - 220px)',
-            minHeight: '400px',
-          }}>
-            {steps.map((step, index) => {
-              const isActive = index === activeIndex;
-              return (
-                <Image
-                  key={step.number}
-                  src={step.image}
-                  alt={step.title}
-                  fill
+        {/* Content Block */}
+        <div style={{ flex: 1, overflow: 'hidden' }}>
+          <div
+            className="roadmap-container"
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'stretch',
+              width: '100%',
+              flex: 1,
+            }}
+          >
+            {/* LEFT COLUMN */}
+            <div className="roadmap-text-col" style={{ flex: '0 0 45%' }}>
+              {/* Step content with animation */}
+              <motion.div
+                key={activeIndex}
+                className="roadmap-step-content"
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, ease: [0.2, 0, 0, 1] as any }}
+              >
+                <div
                   style={{
-                    objectFit: 'cover',
-                    opacity: isActive ? 1 : 0,
-                    transition: 'opacity 0.8s ease-in-out',
+                    fontSize: '28px',
+                    fontWeight: 500,
+                    marginBottom: '16px',
+                    color: '#111',
+                    fontFamily: 'inherit',
                   }}
-                  sizes="45vw"
-                  placeholder="empty"
-                  quality={90}
-                />
-              );
-            })}
+                >
+                  {activeStep.title}
+                </div>
+                <ul style={{ 
+                  listStyle: 'none', 
+                  padding: 0, 
+                  margin: 0,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '12px',
+                }}>
+                  {activeStep.description.map((item, i) => (
+                    <li key={i} style={{
+                      fontSize: '17px',
+                      lineHeight: 1.6,
+                      color: '#444',
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: '12px',
+                    }}>
+                      <span style={{ 
+                        color: '#aaa', 
+                        fontSize: '13px',
+                        marginTop: '3px',
+                        flexShrink: 0,
+                      }}>—</span>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </motion.div>
+            </div>
+
+              {/* RIGHT COLUMN - Visual Images */}
+            <div className="roadmap-image-col" style={{ 
+              flex: '0 0 45%', 
+              position: 'relative', 
+              height: 'calc(100vh - 220px)',
+              minHeight: '400px',
+            }}>
+              {steps.map((step, index) => {
+                const isActive = index === activeIndex;
+                return (
+                  <Image
+                    key={step.number}
+                    src={step.image}
+                    alt={step.title}
+                    fill
+                    style={{
+                      objectFit: 'cover',
+                      opacity: isActive ? 1 : 0,
+                      transition: 'opacity 0.8s ease-in-out',
+                    }}
+                    sizes="45vw"
+                    placeholder="empty"
+                    quality={90}
+                  />
+                );
+              })}
+            </div>
           </div>
         </div>
 
@@ -270,10 +279,8 @@ export default function Roadmap() {
         <div
           className="roadmap-indicators"
           style={{
-            position: 'absolute',
-            bottom: '40px',
-            left: '64px',
-            right: '64px',
+            marginTop: '24px',
+            paddingBottom: 0,
             display: 'flex',
             gap: '8px',
           }}
