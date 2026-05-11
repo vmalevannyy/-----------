@@ -69,10 +69,23 @@ export default function Roadmap() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [stepProgress, setStepProgress] = useState(0); // 0-1 within current step
+  const [isMobile, setIsMobile] = useState(false);
   const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {
+    const checkIsMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkIsMobile();
+    window.addEventListener('resize', checkIsMobile);
+
     const handleScroll = () => {
+      if (window.innerWidth < 768) {
+        // No-op for mobile
+        return;
+      }
+
       if (!sectionRef.current) return;
 
       const section = sectionRef.current;
@@ -100,6 +113,7 @@ export default function Roadmap() {
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', checkIsMobile);
     };
   }, []);
 
@@ -112,10 +126,10 @@ export default function Roadmap() {
         ref={sectionRef}
         initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 32 }}
         whileInView={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '-80px' }}
+        viewport={{ once: true, margin: "-80px" }}
         transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.7, ease: [0.2, 0, 0, 1] as any }}
         style={{
-          height: '350vh',
+          height: isMobile ? 'auto' : '350vh',
           position: 'relative',
           backgroundColor: '#f7f6f4',
           color: '#111',
@@ -125,34 +139,55 @@ export default function Roadmap() {
       <style>{`
         @media (max-width: 768px) {
           .sticky-container {
-            height: calc(100dvh - ${NAVBAR_HEIGHT}px) !important;
-            padding-top: ${NAVBAR_HEIGHT + 8}px !important;
+            position: static !important; /* Remove sticky positioning */
+            height: auto !important;
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
           }
           .content-block {
             overflow: visible !important;
           }
           .roadmap-container {
             flex-direction: column !important;
+            padding: 20px !important;
           }
           .roadmap-image-col {
-            height: 40vh !important;
-            max-height: 260px !important;
-            flex: 1 1 100% !important;
+            width: 100% !important;
+            height: auto !important;
+            max-height: 30vh !important;
+            object-fit: cover !important;
+            flex: none !important;
             order: -1;
+            position: relative !important; /* Ensure image is positioned correctly */
+          }
+          .roadmap-image-col img {
+            position: static !important; /* Remove fill for Image component */
+            height: 100% !important;
+            width: 100% !important;
+            object-fit: cover !important;
           }
           .roadmap-text-col {
-            flex: 1 1 100% !important;
-            overflow-y: auto !important;
-            max-height: calc(100dvh - ${NAVBAR_HEIGHT}px - 40vh - 120px) !important;
+            flex: none !important;
+            overflow-y: visible !important;
+            max-height: none !important;
+          }
+          .roadmap-step-content h3 {
+            font-size: 24px !important;
+            margin-top: 16px !important;
+            margin-bottom: 0 !important;
+          }
+          .roadmap-step-content ul {
+            gap: 8px !important;
           }
           .roadmap-indicators {
-            padding-bottom: calc(env(safe-area-inset-bottom) + 16px) !important;
-          }
-          .roadmap-step-content ul li {
-            gap: 6px !important;
+            margin-top: 24px !important;
+            margin-bottom: 32px !important;
+            padding-bottom: 0 !important; /* Remove previous padding, rely on margin-bottom */
           }
           .roadmap-step-content div:first-child {
-            font-size: 20px !important;
+             font-size: 24px !important;
+             margin-top: 16px !important;
+             margin-bottom: 0 !important;
           }
         }
       `}</style>
