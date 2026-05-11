@@ -124,6 +124,13 @@ export default function Roadmap() {
       >
       <style>{`
         @media (max-width: 768px) {
+          .sticky-container {
+            height: calc(100dvh - ${NAVBAR_HEIGHT}px) !important;
+            padding-top: ${NAVBAR_HEIGHT + 8}px !important;
+          }
+          .content-block {
+            overflow: visible !important;
+          }
           .roadmap-container {
             flex-direction: column !important;
           }
@@ -135,11 +142,22 @@ export default function Roadmap() {
           }
           .roadmap-text-col {
             flex: 1 1 100% !important;
+            overflow-y: auto !important;
+            max-height: calc(100dvh - ${NAVBAR_HEIGHT}px - 40vh - 120px) !important;
           }
-
+          .roadmap-indicators {
+            padding-bottom: calc(env(safe-area-inset-bottom) + 16px) !important;
+          }
+          .roadmap-step-content ul li {
+            gap: 6px !important;
+          }
+          .roadmap-step-content div:first-child {
+            font-size: 20px !important;
+          }
         }
       `}</style>
       <div
+          className="sticky-container"
           style={{
             position: 'sticky',
             top: 0,
@@ -183,7 +201,7 @@ export default function Roadmap() {
         </div>
 
         {/* Content Block */}
-        <div style={{ flex: 1, overflow: 'hidden' }}>
+        <div className="content-block" style={{ flex: 1, overflow: 'hidden' }}>
           <div
             className="roadmap-container"
             style={{
