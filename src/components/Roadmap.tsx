@@ -70,6 +70,14 @@ export default function Roadmap() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [stepProgress, setStepProgress] = useState(0);
   const shouldReduceMotion = useReducedMotion();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -94,6 +102,93 @@ export default function Roadmap() {
 
   const activeStep = steps[activeIndex];
 
+  if (isMobile) {
+    return (
+      <section
+        id="process"
+        style={{
+          backgroundColor: '#f7f6f4',
+          padding: '60px 24px 60px 24px',
+          fontFamily: 'var(--font-geist-sans), sans-serif',
+        }}
+      >
+        <div style={{
+          fontSize: '11px',
+          letterSpacing: '0.3em',
+          color: '#999',
+          marginBottom: '16px',
+          textTransform: 'uppercase',
+        }}>
+          Процесс работы
+        </div>
+        <div style={{
+          fontSize: 'clamp(2rem, 8vw, 3rem)',
+          fontWeight: 300,
+          lineHeight: 1.1,
+          marginBottom: '48px',
+          letterSpacing: '-0.02em',
+          color: '#111',
+        }}>
+          Шаг за шагом
+        </div>
+        {steps.map((step, index) => (
+          <div key={step.number} style={{
+            marginBottom: '40px',
+            paddingBottom: '40px',
+            borderBottom: index < steps.length - 1 
+              ? '1px solid rgba(0,0,0,0.1)' 
+              : 'none',
+          }}>
+            <div style={{
+              fontSize: '11px',
+              letterSpacing: '0.2em',
+              color: '#999',
+              marginBottom: '8px',
+              textTransform: 'uppercase',
+            }}>
+              {step.number}
+            </div>
+            <div style={{
+              fontSize: '22px',
+              fontWeight: 500,
+              marginBottom: '12px',
+              color: '#111',
+            }}>
+              {step.title}
+            </div>
+            <ul style={{
+              listStyle: 'none',
+              padding: 0,
+              margin: 0,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '8px',
+            }}>
+              {step.description.map((item, i) => (
+                <li key={i} style={{
+                  fontSize: '15px',
+                  lineHeight: 1.6,
+                  color: '#444',
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: '10px',
+                }}>
+                  <span style={{
+                    color: '#aaa',
+                    fontSize: '12px',
+                    marginTop: '3px',
+                    flexShrink: 0,
+                  }}>—</span>
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </section>
+    );
+  }
+
   return (
     <motion.section
       id="process"
@@ -111,33 +206,6 @@ export default function Roadmap() {
         fontFamily: 'var(--font-geist-sans), sans-serif',
       }}
     >
-      <style>{`
-        @media (max-width: 768px) {
-          .roadmap-section {
-            height: auto !important;
-          }
-          .roadmap-sticky {
-            position: static !important;
-            height: auto !important;
-            overflow: visible !important;
-            padding: 40px 24px 60px 24px !important;
-          }
-          .roadmap-container {
-            flex-direction: column !important;
-          }
-          .roadmap-image-col {
-            display: none !important;
-          }
-          .roadmap-indicators {
-            display: none !important;
-          }
-          .roadmap-text-col {
-            flex: 1 1 100% !important;
-            width: 100% !important;
-          }
-        }
-      `}</style>
-
       <div
         className="roadmap-sticky"
         style={{
